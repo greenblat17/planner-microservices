@@ -1,0 +1,12 @@
+server.port=8888
+spring.application.name=
+
+spring.cloud.config.server.git.uri=
+
+spring.cloud.config.server.git.clone-on-start=true
+spring.cloud.config.server.git.basedir=
+
+spring.cloud.config.server.git.username=
+spring.cloud.config.server.git.password=
+
+spring.cloud.config.server.git.default-label=main
