@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.Objects;
 
 @Entity
-@Table(name = "task", schema = "todolist", catalog = "postgres")
+@Table(name = "task", schema = "todo", catalog = "planner_todo")
 @Getter
 @Setter
 @NoArgsConstructor

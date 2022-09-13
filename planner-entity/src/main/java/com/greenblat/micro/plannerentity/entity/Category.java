@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Entity
-@Table(name = "category", schema = "todolist", catalog = "postgres")
+@Table(name = "category", schema = "todo", catalog = "planner_todo")
 @Getter
 @Setter
 @AllArgsConstructor
