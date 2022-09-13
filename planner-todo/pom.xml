@@ -36,6 +36,11 @@
             <artifactId>planner-entity</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>com.greenblat.micro</groupId>
+            <artifactId>planner-utils</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
 
         <dependency>
             <groupId>org.postgresql</groupId>
