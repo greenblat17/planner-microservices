@@ -1,4 +1,4 @@
-package com.greenblat.backend.todo.aop;
+package com.greenblat.micro.plannertodo.aop;
 
 import lombok.extern.java.Log;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -13,7 +13,7 @@ import org.springframework.util.StopWatch;
 @Log
 public class LoggingAspect {
 
-    @Around("execution(* com.greenblat.backend.todo.controller..*(..)))")
+    @Around("execution(* com.greenblat.micro.plannertodo.controller..*(..)))")
     public Object profileControllerMethods(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         MethodSignature methodSignature = (MethodSignature) proceedingJoinPoint.getSignature();
 

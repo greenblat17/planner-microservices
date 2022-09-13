@@ -1,7 +1,7 @@
-package com.greenblat.backend.todo.service;
+package com.greenblat.micro.plannertodo.service;
 
-import com.greenblat.backend.todo.entity.Category;
-import com.greenblat.backend.todo.repository.CategoryRepository;
+import com.greenblat.micro.plannerentity.entity.Category;
+import com.greenblat.micro.plannertodo.repository.CategoryRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,12 +21,12 @@ public class CategoryService {
         return categoryRepository.findById(id).get();
     }
 
-    public List<Category> findAll(String email) {
-        return categoryRepository.findByUserEmailOrderByTitleAsc(email);
+    public List<Category> findAll(Long userId) {
+        return categoryRepository.findByUserIdOrderByTitleAsc(userId);
     }
 
-    public List<Category> findByTitle(String title, String email) {
-        return categoryRepository.findByTitle(email, title);
+    public List<Category> findByTitle(String title, Long userId) {
+        return categoryRepository.findByTitle(title, userId);
     }
 
     @Transactional

@@ -1,8 +1,8 @@
-package com.greenblat.backend.todo.controller;
+package com.greenblat.micro.plannertodo.controller;
 
-import com.greenblat.backend.todo.entity.Category;
-import com.greenblat.backend.todo.search.CategorySearchValues;
-import com.greenblat.backend.todo.service.CategoryService;
+import com.greenblat.micro.plannerentity.entity.Category;
+import com.greenblat.micro.plannertodo.search.CategorySearchValues;
+import com.greenblat.micro.plannertodo.service.CategoryService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,8 +26,8 @@ public class CategoryController {
     }
 
     @GetMapping("/all")
-    public List<Category> findAll(@RequestParam("email") String email) {
-        return categoryService.findAll(email);
+    public List<Category> findAll(@RequestParam("user_id") Long userId) {
+        return categoryService.findAll(userId);
     }
 
     @PostMapping("/add")
@@ -63,12 +63,12 @@ public class CategoryController {
     @PostMapping("/search")
     public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValues categorySearchValues) {
 
-        if (categorySearchValues.getEmail() == null || categorySearchValues.getEmail().trim().length() == 0) {
+        if (categorySearchValues.getUserId() == null || categorySearchValues.getUserId() == 0) {
             return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
         }
 
         List<Category> categoryByTitle = categoryService.findByTitle(
-                categorySearchValues.getTitle(), categorySearchValues.getEmail());
+                categorySearchValues.getTitle(), categorySearchValues.getUserId());
 
         return  ResponseEntity.ok(categoryByTitle);
 

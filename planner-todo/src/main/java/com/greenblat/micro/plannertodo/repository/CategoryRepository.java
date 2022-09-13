@@ -1,6 +1,6 @@
-package com.greenblat.backend.todo.repository;
+package com.greenblat.micro.plannertodo.repository;
 
-import com.greenblat.backend.todo.entity.Category;
+import com.greenblat.micro.plannerentity.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -11,15 +11,15 @@ import java.util.List;
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
-    List<Category> findByUserEmailOrderByTitleAsc(String email);
+    List<Category> findByUserIdOrderByTitleAsc(Long id);
 
     @Query(
             "SELECT c FROM Category c WHERE" +
-                    " c.user.email=:email AND " +
                     "(:title IS NULL OR " +
                     ":title='' OR " +
                     "lower(:title) like lower(concat('%', :title, '%') ) )" +
+                    "AND c.userId=:userId " +
                     "ORDER BY c.title ASC"
     )
-    List<Category> findByTitle(@Param("email") String email, @Param("title") String title);
+    List<Category> findByTitle(@Param("title") String title, @Param("userId") Long userId);
 }
