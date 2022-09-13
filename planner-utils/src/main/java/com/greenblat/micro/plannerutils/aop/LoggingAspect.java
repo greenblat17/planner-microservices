@@ -1,4 +1,4 @@
-package com.greenblat.micro.plannertodo.aop;
+package com.greenblat.micro.plannerutils.aop;
 
 import lombok.extern.java.Log;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -29,7 +29,7 @@ public class LoggingAspect {
         stopWatch.stop();
 
         log.info("-------- Execution time of " + className + "." + methodName + "() :: "
-                + stopWatch.getTotalTimeMillis() + " ms");
+                + stopWatch.getTotalTimeMillis() + "ms");
 
         return result;
     }
