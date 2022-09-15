@@ -1,4 +1,4 @@
-package com.greenblat.micro.plannerutils.rest_template;
+package com.greenblat.micro.plannerutils.rest.resttemplate;
 
 import com.greenblat.micro.plannerentity.entity.User;
 import org.springframework.http.*;
