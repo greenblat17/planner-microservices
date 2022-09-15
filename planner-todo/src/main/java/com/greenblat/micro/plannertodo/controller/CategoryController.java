@@ -3,6 +3,7 @@ package com.greenblat.micro.plannertodo.controller;
 import com.greenblat.micro.plannerentity.entity.Category;
 import com.greenblat.micro.plannertodo.search.CategorySearchValues;
 import com.greenblat.micro.plannertodo.service.CategoryService;
+import com.greenblat.micro.plannerutils.rest_template.UserRestBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,19 +15,21 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
+    private final UserRestBuilder userRestBuilder;
 
-    public CategoryController(CategoryService categoryService) {
+    public CategoryController(CategoryService categoryService, UserRestBuilder userRestBuilder) {
         this.categoryService = categoryService;
+        this.userRestBuilder = userRestBuilder;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> findById(@PathVariable("id") Long id) {
+    public ResponseEntity<Category> showCategory(@PathVariable("id") Long id) {
         Category category = categoryService.getById(id);
         return ResponseEntity.ok(category);
     }
 
     @GetMapping("/all")
-    public List<Category> findAll(@RequestParam("user_id") Long userId) {
+    public List<Category> showAllCategories(@RequestParam("user_id") Long userId) {
         return categoryService.findAll(userId);
     }
 
@@ -37,7 +40,11 @@ public class CategoryController {
             return new ResponseEntity("misses param: title must bu null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(categoryService.addCategory(category));
+        if (userRestBuilder.userExists(category.getUserId())) {
+            return ResponseEntity.ok(categoryService.addCategory(category));
+        }
+
+        return new ResponseEntity("user with id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")

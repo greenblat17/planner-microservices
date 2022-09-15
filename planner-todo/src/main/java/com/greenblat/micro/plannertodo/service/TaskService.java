@@ -1,4 +1,4 @@
-package com.greenblat.micro.plannertodo;
+package com.greenblat.micro.plannertodo.service;
 
 import com.greenblat.micro.plannerentity.entity.Task;
 import com.greenblat.micro.plannertodo.repository.TaskRepository;

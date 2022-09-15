@@ -2,7 +2,8 @@ package com.greenblat.micro.plannertodo.controller;
 
 import com.greenblat.micro.plannerentity.entity.Task;
 import com.greenblat.micro.plannertodo.search.TaskSearchValues;
-import com.greenblat.micro.plannertodo.TaskService;
+import com.greenblat.micro.plannertodo.service.TaskService;
+import com.greenblat.micro.plannerutils.rest_template.UserRestBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -21,10 +22,12 @@ public class TaskController {
 
     public static final String ID_COLUMN = "id";
     private final TaskService taskService;
+    private final UserRestBuilder userRestBuilder;
 
 
-    public TaskController(TaskService taskService) {
+    public TaskController(TaskService taskService, UserRestBuilder userRestBuilder) {
         this.taskService = taskService;
+        this.userRestBuilder = userRestBuilder;
     }
 
 
@@ -36,18 +39,19 @@ public class TaskController {
     @PostMapping("/add")
     public ResponseEntity<Task> add(@RequestBody Task task) {
 
-        // проверка на обязательные параметры
         if (task.getId() != null && task.getId() != 0) {
-            // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
             return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // если передали пустое значение title
         if (task.getTitle() == null || task.getTitle().trim().length() == 0) {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(taskService.add(task)); // возвращаем созданный объект со сгенерированным id
+        if (userRestBuilder.userExists(task.getUserId())) {
+            return ResponseEntity.ok(taskService.add(task));
+        }
+
+        return new ResponseEntity("user with id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
 
     }
 
