@@ -19,12 +19,11 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public User getUserById(Long id) {
-        Optional<User> findUser = userRepository.findById(id);
-        return findUser.orElseGet(User::new);
+    public Optional<User> getUserById(Long id) {
+        return userRepository.findById(id);
     }
 
-    public User getUserByEmail(String email) {
+    public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 

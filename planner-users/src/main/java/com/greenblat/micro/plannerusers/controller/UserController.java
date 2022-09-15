@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/user")
@@ -24,23 +25,19 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> showUser(@PathVariable("id") Long id) {
-        User user = userService.getUserById(id);
-        return ResponseEntity.ok(user);
-    }
-
-    @GetMapping("/all")
-    public ResponseEntity<User> showAllUsersById(@RequestParam(value = "user_id", required = false) Long userId, @RequestParam(value = "email", required = false) String email) {
+    @GetMapping("/show")
+    public ResponseEntity<User> showUser(@RequestParam(value = "user_id", required = false) Long userId, @RequestParam(value = "email", required = false) String email) {
         if (userId == null && email == null) {
             return new ResponseEntity("missed param: email OR id", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (email != null) {
-            return ResponseEntity.ok(userService.getUserByEmail(email));
+        if (userId != null) {
+            Optional<User> user = userService.getUserById(userId);
+            return user.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity("user not found", HttpStatus.BAD_REQUEST));
+        } else {
+            Optional<User> user = userService.getUserByEmail(email );
+            return user.map(ResponseEntity::ok).orElseGet(() -> new ResponseEntity("user not found", HttpStatus.BAD_REQUEST));
         }
-
-        return ResponseEntity.ok(userService.getUserById(userId));
     }
 
     @PostMapping("/add")
