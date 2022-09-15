@@ -12,7 +12,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import java.util.Set;
 
 @Entity
-@Table(name = "role_data", schema = "todolist", catalog = "postgres")
+@Table(name = "role_data", schema = "users", catalog = "planner_users")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -33,8 +33,8 @@ public class Role {
     @ManyToMany
     @JoinTable(
             name = "user_role",
-            schema = "todolist",
-            catalog = "postgres",
+            schema = "users",
+            catalog = "planner_users",
             joinColumns = @JoinColumn(name = "user_id", updatable = false),
             inverseJoinColumns = @JoinColumn(name = "role_id", updatable = false)
     )
