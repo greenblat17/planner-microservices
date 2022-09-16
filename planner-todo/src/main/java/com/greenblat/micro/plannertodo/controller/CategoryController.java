@@ -3,7 +3,8 @@ package com.greenblat.micro.plannertodo.controller;
 import com.greenblat.micro.plannerentity.entity.Category;
 import com.greenblat.micro.plannertodo.search.CategorySearchValues;
 import com.greenblat.micro.plannertodo.service.CategoryService;
-import com.greenblat.micro.plannerutils.rest_template.UserRestBuilder;
+import com.greenblat.micro.plannerutils.rest.resttemplate.UserRestBuilder;
+import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,11 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final UserRestBuilder userRestBuilder;
+    private final UserWebClientBuilder userWebClientBuilder;
 
-    public CategoryController(CategoryService categoryService, UserRestBuilder userRestBuilder) {
+    public CategoryController(CategoryService categoryService, UserWebClientBuilder userWebClientBuilder) {
         this.categoryService = categoryService;
-        this.userRestBuilder = userRestBuilder;
+        this.userWebClientBuilder = userWebClientBuilder;
     }
 
     @GetMapping("/{id}")
@@ -40,11 +41,12 @@ public class CategoryController {
             return new ResponseEntity("misses param: title must bu null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (userRestBuilder.userExists(category.getUserId())) {
+        Long userId = category.getUserId();
+        if (userWebClientBuilder.userExists(userId)) {
             return ResponseEntity.ok(categoryService.addCategory(category));
         }
 
-        return new ResponseEntity("user with id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity("user with id=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")
@@ -77,7 +79,7 @@ public class CategoryController {
         List<Category> categoryByTitle = categoryService.findByTitle(
                 categorySearchValues.getTitle(), categorySearchValues.getUserId());
 
-        return  ResponseEntity.ok(categoryByTitle);
+        return ResponseEntity.ok(categoryByTitle);
 
     }
 }

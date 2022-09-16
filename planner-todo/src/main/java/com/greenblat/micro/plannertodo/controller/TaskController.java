@@ -3,7 +3,8 @@ package com.greenblat.micro.plannertodo.controller;
 import com.greenblat.micro.plannerentity.entity.Task;
 import com.greenblat.micro.plannertodo.search.TaskSearchValues;
 import com.greenblat.micro.plannertodo.service.TaskService;
-import com.greenblat.micro.plannerutils.rest_template.UserRestBuilder;
+import com.greenblat.micro.plannerutils.rest.resttemplate.UserRestBuilder;
+import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,12 +23,12 @@ public class TaskController {
 
     public static final String ID_COLUMN = "id";
     private final TaskService taskService;
-    private final UserRestBuilder userRestBuilder;
+    private final UserWebClientBuilder userWebClientBuilder;
 
 
-    public TaskController(TaskService taskService, UserRestBuilder userRestBuilder) {
+    public TaskController(TaskService taskService, UserWebClientBuilder userWebClientBuilder) {
         this.taskService = taskService;
-        this.userRestBuilder = userRestBuilder;
+        this.userWebClientBuilder = userWebClientBuilder;
     }
 
 
@@ -47,11 +48,12 @@ public class TaskController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (userRestBuilder.userExists(task.getUserId())) {
+        Long userId = task.getUserId();
+        if (userWebClientBuilder.userExists(userId)) {
             return ResponseEntity.ok(taskService.add(task));
         }
 
-        return new ResponseEntity("user with id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity("user with id=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
 
     }
 

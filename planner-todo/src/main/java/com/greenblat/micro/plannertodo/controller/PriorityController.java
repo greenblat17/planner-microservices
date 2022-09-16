@@ -3,7 +3,8 @@ package com.greenblat.micro.plannertodo.controller;
 import com.greenblat.micro.plannerentity.entity.Priority;
 import com.greenblat.micro.plannertodo.search.PrioritySearchValues;
 import com.greenblat.micro.plannertodo.service.PriorityService;
-import com.greenblat.micro.plannerutils.rest_template.UserRestBuilder;
+import com.greenblat.micro.plannerutils.rest.resttemplate.UserRestBuilder;
+import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,11 +16,11 @@ import java.util.List;
 public class PriorityController {
 
     private final PriorityService priorityService;
-    private final UserRestBuilder userRestBuilder;
+    private final UserWebClientBuilder userWebClientBuilder;
 
-    public PriorityController(PriorityService priorityService, UserRestBuilder userRestBuilder) {
+    public PriorityController(PriorityService priorityService, UserWebClientBuilder userWebClientBuilder) {
         this.priorityService = priorityService;
-        this.userRestBuilder = userRestBuilder;
+        this.userWebClientBuilder = userWebClientBuilder;
     }
 
     @GetMapping("/{id}")
@@ -39,11 +40,12 @@ public class PriorityController {
             return new ResponseEntity("misses param: title must bu null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        if (userRestBuilder.userExists(priority.getUserId())) {
+        Long userId = priority.getUserId();
+        if (userWebClientBuilder.userExists(userId)) {
             return ResponseEntity.ok(priorityService.addPriority(priority));
         }
 
-        return new ResponseEntity("user with id=" + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity("user with id=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")
