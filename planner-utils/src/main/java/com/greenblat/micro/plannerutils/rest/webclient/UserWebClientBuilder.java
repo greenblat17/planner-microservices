@@ -13,20 +13,33 @@ public class UserWebClientBuilder {
     public boolean userExists(Long userId) {
 
         try {
-            Flux<User> user = WebClient.create(BASE_URL)
+            User user = WebClient.create(BASE_URL)
                     .get()
                     .uri(uriBuilder -> uriBuilder.path("/show")
                             .queryParam("user_id", userId)
                             .build())
                     .retrieve()
-                    .bodyToFlux(User.class);
+                    .bodyToFlux(User.class)
+                    .blockFirst();
 
-            if (user.blockFirst() != null)
+            if (user != null)
                 return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return false;
+    }
+
+    public Flux<User> userExistAsync(Long userId) {
+        Flux<User> userFlux = WebClient.create(BASE_URL)
+                .get()
+                .uri(uriBuilder -> uriBuilder.path("/show")
+                        .queryParam("user_id", userId)
+                        .build())
+                .retrieve()
+                .bodyToFlux(User.class);
+
+        return userFlux;
     }
 }
