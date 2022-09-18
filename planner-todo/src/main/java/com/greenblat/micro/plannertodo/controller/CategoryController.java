@@ -1,9 +1,9 @@
 package com.greenblat.micro.plannertodo.controller;
 
 import com.greenblat.micro.plannerentity.entity.Category;
+import com.greenblat.micro.plannertodo.feign.UserFeignClient;
 import com.greenblat.micro.plannertodo.search.CategorySearchValues;
 import com.greenblat.micro.plannertodo.service.CategoryService;
-import com.greenblat.micro.plannerutils.rest.resttemplate.UserRestBuilder;
 import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +16,11 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final UserWebClientBuilder userWebClientBuilder;
+    private final UserFeignClient userFeignClient;
 
-    public CategoryController(CategoryService categoryService, UserWebClientBuilder userWebClientBuilder) {
+    public CategoryController(CategoryService categoryService, UserFeignClient userFeignClient) {
         this.categoryService = categoryService;
-        this.userWebClientBuilder = userWebClientBuilder;
+        this.userFeignClient = userFeignClient;
     }
 
     @GetMapping("/{id}")
@@ -42,7 +42,7 @@ public class CategoryController {
         }
 
         Long userId = category.getUserId();
-        if (userWebClientBuilder.userExists(userId)) {
+        if (userFeignClient.findUserById(userId) != null) {
             return ResponseEntity.ok(categoryService.addCategory(category));
         }
 
@@ -51,6 +51,7 @@ public class CategoryController {
 
     @PutMapping("/update")
     public ResponseEntity<Category> update(@RequestBody Category category) {
+
         if (category.getId() == null || category.getId() == 0) {
             return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
         }

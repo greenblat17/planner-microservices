@@ -1,9 +1,9 @@
 package com.greenblat.micro.plannertodo.controller;
 
 import com.greenblat.micro.plannerentity.entity.Task;
+import com.greenblat.micro.plannertodo.feign.UserFeignClient;
 import com.greenblat.micro.plannertodo.search.TaskSearchValues;
 import com.greenblat.micro.plannertodo.service.TaskService;
-import com.greenblat.micro.plannerutils.rest.resttemplate.UserRestBuilder;
 import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,13 +22,14 @@ import java.util.List;
 public class TaskController {
 
     public static final String ID_COLUMN = "id";
+
     private final TaskService taskService;
-    private final UserWebClientBuilder userWebClientBuilder;
+    private final UserFeignClient userFeignClient;
 
 
-    public TaskController(TaskService taskService, UserWebClientBuilder userWebClientBuilder) {
+    public TaskController(TaskService taskService,  UserFeignClient userFeignClient) {
         this.taskService = taskService;
-        this.userWebClientBuilder = userWebClientBuilder;
+        this.userFeignClient = userFeignClient;
     }
 
 
@@ -49,7 +50,7 @@ public class TaskController {
         }
 
         Long userId = task.getUserId();
-        if (userWebClientBuilder.userExists(userId)) {
+        if (userFeignClient.findUserById(userId) != null) {
             return ResponseEntity.ok(taskService.add(task));
         }
 

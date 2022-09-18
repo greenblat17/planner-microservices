@@ -1,9 +1,9 @@
 package com.greenblat.micro.plannertodo.controller;
 
 import com.greenblat.micro.plannerentity.entity.Priority;
+import com.greenblat.micro.plannertodo.feign.UserFeignClient;
 import com.greenblat.micro.plannertodo.search.PrioritySearchValues;
 import com.greenblat.micro.plannertodo.service.PriorityService;
-import com.greenblat.micro.plannerutils.rest.resttemplate.UserRestBuilder;
 import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +16,11 @@ import java.util.List;
 public class PriorityController {
 
     private final PriorityService priorityService;
-    private final UserWebClientBuilder userWebClientBuilder;
+    private final UserFeignClient userFeignClient;
 
-    public PriorityController(PriorityService priorityService, UserWebClientBuilder userWebClientBuilder) {
+    public PriorityController(PriorityService priorityService, UserFeignClient userFeignClient) {
         this.priorityService = priorityService;
-        this.userWebClientBuilder = userWebClientBuilder;
+        this.userFeignClient = userFeignClient;
     }
 
     @GetMapping("/{id}")
@@ -41,7 +41,7 @@ public class PriorityController {
         }
 
         Long userId = priority.getUserId();
-        if (userWebClientBuilder.userExists(userId)) {
+        if (userFeignClient.findUserById(userId) != null) {
             return ResponseEntity.ok(priorityService.addPriority(priority));
         }
 
