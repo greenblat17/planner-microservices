@@ -4,6 +4,7 @@ import com.greenblat.micro.plannerentity.entity.Task;
 import com.greenblat.micro.plannerentity.entity.User;
 import com.greenblat.micro.plannerusers.search.UserSearchValues;
 import com.greenblat.micro.plannerusers.service.UserService;
+import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -19,10 +19,13 @@ import java.util.Optional;
 public class UserController {
 
     public static final String ID_COLUMN = "id";
-    private final UserService userService;
 
-    public UserController(UserService userService) {
+    private final UserService userService;
+    private final UserWebClientBuilder userWebClientBuilder;
+
+    public UserController(UserService userService, UserWebClientBuilder userWebClientBuilder) {
         this.userService = userService;
+        this.userWebClientBuilder = userWebClientBuilder;
     }
 
     @GetMapping("/show")
@@ -55,7 +58,15 @@ public class UserController {
             return new ResponseEntity("missed param: password", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(userService.addUser(user));
+        user = userService.addUser(user);
+
+        if (user != null) {
+            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
+                System.out.println("user populated: " + result);
+            });
+        }
+
+        return ResponseEntity.ok(user);
 
     }
 
