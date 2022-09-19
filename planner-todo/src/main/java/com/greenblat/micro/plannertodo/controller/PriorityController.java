@@ -1,6 +1,7 @@
 package com.greenblat.micro.plannertodo.controller;
 
 import com.greenblat.micro.plannerentity.entity.Priority;
+import com.greenblat.micro.plannerentity.entity.User;
 import com.greenblat.micro.plannertodo.feign.UserFeignClient;
 import com.greenblat.micro.plannertodo.search.PrioritySearchValues;
 import com.greenblat.micro.plannertodo.service.PriorityService;
@@ -40,12 +41,15 @@ public class PriorityController {
             return new ResponseEntity("misses param: title must bu null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        Long userId = priority.getUserId();
-        if (userFeignClient.findUserById(userId) != null) {
+        ResponseEntity<User> result =  userFeignClient.findUserById(priority.getUserId());
+        if (result == null){
+            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
+        }
+        if (result.getBody() != null){
             return ResponseEntity.ok(priorityService.addPriority(priority));
         }
 
-        return new ResponseEntity("user with id=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity("user id=" + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/update")

@@ -1,6 +1,7 @@
 package com.greenblat.micro.plannertodo.controller;
 
 import com.greenblat.micro.plannerentity.entity.Task;
+import com.greenblat.micro.plannerentity.entity.User;
 import com.greenblat.micro.plannertodo.feign.UserFeignClient;
 import com.greenblat.micro.plannertodo.search.TaskSearchValues;
 import com.greenblat.micro.plannertodo.service.TaskService;
@@ -49,12 +50,15 @@ public class TaskController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        Long userId = task.getUserId();
-        if (userFeignClient.findUserById(userId) != null) {
+        ResponseEntity<User> result =  userFeignClient.findUserById(task.getUserId());
+        if (result == null){
+            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
+        }
+        if (result.getBody() != null){
             return ResponseEntity.ok(taskService.add(task));
         }
 
-        return new ResponseEntity("user with id=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity("user id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
 
     }
 

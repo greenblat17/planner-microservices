@@ -1,10 +1,12 @@
 package com.greenblat.micro.plannertodo.controller;
 
 import com.greenblat.micro.plannerentity.entity.Category;
+import com.greenblat.micro.plannerentity.entity.User;
 import com.greenblat.micro.plannertodo.feign.UserFeignClient;
 import com.greenblat.micro.plannertodo.search.CategorySearchValues;
 import com.greenblat.micro.plannertodo.service.CategoryService;
 import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +20,7 @@ public class CategoryController {
     private final CategoryService categoryService;
     private final UserFeignClient userFeignClient;
 
-    public CategoryController(CategoryService categoryService, UserFeignClient userFeignClient) {
+    public CategoryController(CategoryService categoryService, @Qualifier("com.greenblat.micro.plannertodo.feign.UserFeignClient") UserFeignClient userFeignClient) {
         this.categoryService = categoryService;
         this.userFeignClient = userFeignClient;
     }
@@ -41,12 +43,16 @@ public class CategoryController {
             return new ResponseEntity("misses param: title must bu null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        Long userId = category.getUserId();
-        if (userFeignClient.findUserById(userId) != null) {
+        ResponseEntity<User> result =  userFeignClient.findUserById(category.getUserId());
+        if (result == null){
+            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
+        }
+        if (result.getBody() != null){
             return ResponseEntity.ok(categoryService.addCategory(category));
         }
 
-        return new ResponseEntity("user with id=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity("user id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+
     }
 
     @PutMapping("/update")
