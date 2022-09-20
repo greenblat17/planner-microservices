@@ -1,33 +1,27 @@
-package com.greenblat.micro.plannertodo.controller;
+package com.greenblat.micro.plannertodo.service;
 
 import com.greenblat.micro.plannerentity.entity.Category;
 import com.greenblat.micro.plannerentity.entity.Priority;
 import com.greenblat.micro.plannerentity.entity.Task;
-import com.greenblat.micro.plannertodo.service.CategoryService;
-import com.greenblat.micro.plannertodo.service.PriorityService;
-import com.greenblat.micro.plannertodo.service.TaskService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.Date;
 
-@RestController
-@RequestMapping("/data")
-public class TestDataController {
+@Service
+public class TestDataService {
 
     private final TaskService taskService;
     private final PriorityService priorityService;
     private final CategoryService categoryService;
 
-    public TestDataController(TaskService taskService, PriorityService priorityService, CategoryService categoryService) {
+    public TestDataService(TaskService taskService, PriorityService priorityService, CategoryService categoryService) {
         this.taskService = taskService;
         this.priorityService = priorityService;
         this.categoryService = categoryService;
     }
 
-    @GetMapping("/init/{id}")
-    public ResponseEntity<Boolean> init(@PathVariable("id") Long userId) {
+    public void initTestData( Long userId) {
 
         Priority prior1 = new Priority();
         prior1.setColor("#fff");
@@ -85,10 +79,5 @@ public class TestDataController {
 
         taskService.add(task1);
         taskService.add(task2);
-
-
-
-        return ResponseEntity.ok(true);
-
     }
 }
