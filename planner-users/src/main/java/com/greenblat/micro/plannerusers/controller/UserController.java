@@ -2,6 +2,7 @@ package com.greenblat.micro.plannerusers.controller;
 
 import com.greenblat.micro.plannerentity.entity.Task;
 import com.greenblat.micro.plannerentity.entity.User;
+import com.greenblat.micro.plannerusers.mq.MessageProducer;
 import com.greenblat.micro.plannerusers.search.UserSearchValues;
 import com.greenblat.micro.plannerusers.service.UserService;
 import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
@@ -21,11 +22,11 @@ public class UserController {
     public static final String ID_COLUMN = "id";
 
     private final UserService userService;
-    private final UserWebClientBuilder userWebClientBuilder;
+    private final MessageProducer messageProducer;
 
-    public UserController(UserService userService, UserWebClientBuilder userWebClientBuilder) {
+    public UserController(UserService userService, MessageProducer messageProducer) {
         this.userService = userService;
-        this.userWebClientBuilder = userWebClientBuilder;
+        this.messageProducer = messageProducer;
     }
 
     @GetMapping("/show")
@@ -61,9 +62,10 @@ public class UserController {
         user = userService.addUser(user);
 
         if (user != null) {
-            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
-                System.out.println("user populated: " + result);
-            });
+//            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
+//                System.out.println("user populated: " + result);
+//            });
+            messageProducer.newUserAction(user.getId());
         }
 
         return ResponseEntity.ok(user);
