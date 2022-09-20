@@ -5,7 +5,6 @@ import com.greenblat.micro.plannerentity.entity.User;
 import com.greenblat.micro.plannertodo.feign.UserFeignClient;
 import com.greenblat.micro.plannertodo.search.CategorySearchValues;
 import com.greenblat.micro.plannertodo.service.CategoryService;
-import com.greenblat.micro.plannerutils.rest.webclient.UserWebClientBuilder;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
